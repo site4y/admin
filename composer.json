@@ -1,0 +1,23 @@
+{
+    "name": "s4y/admin",
+    "description": "Admin base classes",
+    "type": "library",
+    "require": {        
+        "s4y/grid": "dev-master",
+        "s4y/form": "dev-master"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Puchkin Dmitriy",
+            "email": "pdima88@mail.ru"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "s4y\\admin\\": "/mod",
+            "": "."
+        }
+    },
+    "minimum-stability": "dev"
+}

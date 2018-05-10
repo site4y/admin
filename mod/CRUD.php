@@ -147,9 +147,9 @@ abstract class CRUD extends Base {
         if ($this->isPost()) {
             if ($form->validate()) {
                 try {
-                    S4Y::getDb()->beginTransaction();
+                    \S4Y::getDb()->beginTransaction();
                     $res = $this->save($form);
-                    S4Y::getDb()->commit();
+                    \S4Y::getDb()->commit();
                     if ($res !== false) {
                         $this->redirectBack([
                             'success' => self::SUCCESS_EDIT
@@ -157,7 +157,7 @@ abstract class CRUD extends Base {
                     }
                 }
                 catch (Exception $e) {
-                    S4Y::getDb()->rollBack();
+                    \S4Y::getDb()->rollBack();
                     $this->setError($e);
                 }
             } else {

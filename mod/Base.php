@@ -16,7 +16,7 @@ abstract class Base {
     function __construct($tpl)
     {
         $this->_tpl = $tpl;
-        $domainDir = S4Y::$domainsDir . DIRECTORY_SEPARATOR . S4Y::$domain;
+        $domainDir = \S4Y::$domainsDir . DIRECTORY_SEPARATOR . \S4Y::$domain;
         $this->_viewsDir = $domainDir . DIRECTORY_SEPARATOR . 'ext'.DIRECTORY_SEPARATOR.'Admin'
             .DIRECTORY_SEPARATOR.'views';
 

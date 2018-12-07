@@ -1,51 +1,51 @@
 <?php
 
+use s4y\admin\Admin;
+
 class Tpl_Admin extends Tpl
 {
     protected $_mod;
     protected $_action;
 
-    function __construct($attr = array()) {
+    function __construct($attr = []) {
         if (S4Y::access('admin')) {
-
-            $domainDir = S4Y::$domainsDir . DIRECTORY_SEPARATOR . S4Y::$domain;
-            $moduleDir = $domainDir . DIRECTORY_SEPARATOR . 'ext' . DIRECTORY_SEPARATOR . 'Admin';
-            $this->_mod = isset($_REQUEST['mod']) ? $_REQUEST['mod'] : 'default';
-            $modFile = $moduleDir . DIRECTORY_SEPARATOR . ucfirst($this->_mod) . '.php';
-
             try {
-                if (file_exists($modFile)) {
-                    include_once($modFile);
-                } elseif ($this->_mod != 'default') {
-                    $this->_mod = 'default';
-                    $modFile = $moduleDir . DIRECTORY_SEPARATOR . 'Default.php';
-                    include_once($modFile);
+                Admin::loadConfig();
+                $this->_mod = $_REQUEST['mod'] ? $_REQUEST['mod'] : null;
+                $modClass = '';
+                if ($this->_mod === null) {
+                    $modClass = 's4y\admin\Admin';
+                } else if (isset(Admin::$admin[$this->_mod])) {
+                    $modClass = Admin::$admin[$this->_mod];
+                } else {
+                    throw new Exception('Модуль '.$this->_mod.' не определен');
                 }
-                $modClass = 'Admin_' . ucfirst($this->_mod);
+
+                $module = null;
                 if (class_exists($modClass, false)) {
                     $module = new $modClass($this);
-                } else throw new Exception('Класс ' . $modClass . ' не определен');
-            } catch (Exception $e) {
-                if ($this->_mod == 'default') {
-                    $this->setVar('ADMINPAGE_ERROR', $e->getMessage() . ' (' .
-                        $e->getFile() . ':' . $e->getLine() . ')');
-                    $this->setVar('ADMINPAGE_CONTENT', '<pre>' . $e->getTraceAsString() . '</pre>');
-                    $this->setVar('ADMINPAGE_TITLE', 'Ошибка');
-                }
-            }
+                } else throw new Exception('Класс ' . $modClass . ' не найден');
 
-            if (isset($module)) {
-                $this->_action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : 'default');
-                $actionMethod = $this->_action . 'Action';
-                if (method_exists($module, $actionMethod)) {
-                    $module->$actionMethod();
-                } elseif ($this->_action != 'default') {
-                    $this->_action = 'default';
-                    $actionMethod = 'defaultAction';
+                if (isset($module)) {
+                    $this->_action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : 'default');
+                    $actionMethod = $this->_action . 'Action';
                     if (method_exists($module, $actionMethod)) {
                         $module->$actionMethod();
+                    } elseif ($this->_action != 'default') {
+                        $this->_action = 'default';
+                        $actionMethod = 'defaultAction';
+                        if (method_exists($module, $actionMethod)) {
+                            $module->$actionMethod();
+                        }
                     }
                 }
+
+                throw new Exception('Метод '.$this->_action.' не найден в модуле '.$this->_mod);
+            } catch (Exception $e) {
+                $this->setVar('ADMINPAGE_ERROR', $e->getMessage() . ' (' .
+                    $e->getFile() . ':' . $e->getLine() . ')');
+                $this->setVar('ADMINPAGE_CONTENT', '<pre>' . $e->getTraceAsString() . '</pre>');
+                $this->setVar('ADMINPAGE_TITLE', 'Ошибка');
             }
         } 
     }

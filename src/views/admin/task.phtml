@@ -1,0 +1,29 @@
+<?php if (isset($log) && !empty($log)): ?>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Отчет о выполнении задачи:
+        </div>
+        <div class="panel-body">
+            <?= $log ?>
+        </div>
+    </div>
+<?php endif; ?>
+
+<p>В прошлый раз была успешно выполнена: <?= $last ?></p>
+
+<script>
+    var taskExecuted = false;
+    function execTask() {
+        if (taskExecuted) return;
+        taskExecuted = true;
+        $('#btnSubmit').attr('disabled','disabled');
+        $('#loaderExecTask').show();
+        $('#formExecTask').submit();
+    }
+</script>
+
+<form id="formExecTask" action="" method="POST">
+    <input type="hidden" name="sync" value="1">
+    <input id="btnSubmit" type="submit" class="btn btn-primary" value="Выполнить задачу" onclick="execTask();">
+    <span id="loaderExecTask" class="loading" style="display:none"></span>
+</form>

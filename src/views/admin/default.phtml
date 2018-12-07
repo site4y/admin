@@ -1,0 +1,91 @@
+<?php
+
+use s4y\Assets;
+use s4y\admin\Admin;
+
+Assets::addStyle('
+    .admin_blocks ul {
+        list-style: none;
+    }
+    .admin_blocks li {
+        width: 150px;
+        float: left;
+
+        text-align: center;
+        color: #444;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        padding: 0;
+    }
+
+    .admin_blocks .glyphicon {
+        font-size: 36px;
+        display: block;
+        margin-bottom: 15px;
+    }
+
+    .admin_blocks a {
+        color: #444;
+        display: block;
+        padding: 10px;
+        border: 1px solid #CCC;
+        min-height: 125px;
+        text-decoration: none;
+        transition: background-color .5s, color .3s, box-shadow .5s;
+    }
+
+    .admin_blocks a:hover {
+
+        color: #FFF;
+        background-color: #00439e;
+        box-shadow: 2px 2px 10px #CCC;
+    }
+
+    .admin_blocks  a:hover .glyphicon {
+        color: #FFF !important;
+        transition: color .3s;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+');
+
+?>
+
+<?php foreach (Admin::$menu as $head => $items): ?>
+<?php if (is_string($head)): ?>
+<h2><?= $head ?></h2>
+<?php endif; ?>
+<div class="admin_blocks container-fluid">
+    <ul>
+        <?php
+            foreach ($items as $id => $item):
+                $url = (isset($item['url']) ? $item['url'] : $id);
+                $icon = (isset($item['icon']) ? $item['icon'] : $id);
+                $title = (isset($item['title']) ? $item['title'] : $id);
+                $class = null;
+                $margin = "";
+                if (strlen($title) < 50) $margin = ' style="margin-top: 5px"';
+                if (isset($item['color'])) {
+                    $color = $item['color'];
+                    $class = 'admin_'.$id;
+                    Assets::addStyle([
+                            'color' => $color
+                    ], '.'.$class.' .glyphicon');
+                    Assets::addStyle([
+                        'background-color' => $color
+                    ], 'a.'.$class.':hover');
+                }
+        ?>
+            <li>
+                <a href="/admin?mod=<?= $url ?>"<?= $class ? ' class="'.$class.'"' : ''?>>
+                    <i class="glyphicon glyphicon-<?= $icon ?>"<?= $margin ?>></i>
+                    <?= $title ?>
+                </a>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</div>
+<?php endforeach; ?>
+

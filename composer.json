@@ -15,7 +15,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "s4y\\admin\\": "/mod",
+            "s4y\\admin\\": "/src",
             "": "."
         }
     },

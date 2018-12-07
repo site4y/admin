@@ -26,7 +26,7 @@ class Admin extends Base
             }
         }
         if (self::$menu === null) self::$menu = [];
-        self::_parseConfig($menu);
+        self::_parseConfig(self::$menu);
     }
 
     private static function _parseConfig(&$menu) {
@@ -43,7 +43,7 @@ class Admin extends Base
 
     function defaultAction()
     {
-        $this->setTitle('Добро пожаловать в админ-панель !'.\S4Y::$domain);
+        $this->setTitle('Добро пожаловать в админ-панель '.\S4Y::$domain.'!');
         $this->setContent($this->view('default'));
     }
 

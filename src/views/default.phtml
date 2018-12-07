@@ -61,9 +61,10 @@ Assets::addStyle('
     <ul>
         <?php
             foreach ($items as $id => $item):
+                if (!isset($item['title'])) continue;
                 $url = (isset($item['url']) ? $item['url'] : $id);
                 $icon = (isset($item['icon']) ? $item['icon'] : $id);
-                $title = (isset($item['title']) ? $item['title'] : $id);
+                $title =  $item['title'];
                 $class = null;
                 $margin = "";
                 if (strlen($title) < 50) $margin = ' style="margin-top: 5px"';

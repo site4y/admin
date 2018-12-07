@@ -4,7 +4,7 @@ namespace s4y\admin;
 
 abstract class Base {
     protected $_tpl;
-    protected $_viewsDir;
+    protected $_viewsDirs = null;
     protected $_vars;
 
     protected $_messages = [];
@@ -17,8 +17,6 @@ abstract class Base {
     {
         $this->_tpl = $tpl;
         $domainDir = \S4Y::$domainsDir . DIRECTORY_SEPARATOR . \S4Y::$domain;
-        $this->_viewsDir = $domainDir . DIRECTORY_SEPARATOR . 'ext'.DIRECTORY_SEPARATOR.'Admin'
-            .DIRECTORY_SEPARATOR.'views';
 
         $this->returnUrl = isset($_GET['mod']) ? '/admin?mod='.$_GET['mod'] : self::ADMIN_HOME;
 
@@ -81,14 +79,54 @@ abstract class Base {
         return false;
     }
 
+    function getViewDirs() {
+        if (!isset($this->_viewsDirs)) {
+            $vd = [];
+
+            $domains = \S4Y::$parentDomains->names;
+            foreach ($domains as $d) {
+                $vd[] = \S4Y::$domainsDir . DIRECTORY_SEPARATOR .$d.
+                    DIRECTORY_SEPARATOR. 'views';
+            }
+
+            $className = get_called_class();
+            $refl = new \ReflectionClass($className);
+            if ($refl && $fileName = $refl->getFileName()) {
+                $vd[] = dirname($fileName) . DIRECTORY_SEPARATOR . 'views';
+            }
+
+            $vd[] = dirname(__FILE__).DIRECTORY_SEPARATOR.'views';
+
+            $this->_viewsDirs = $vd;
+        }
+        return $this->_viewsDirs;
+    }
+
     function view($name)
     {
         if (!empty($this->_vars)) extract($this->_vars);
-        $viewFile = $this->_viewsDir . DIRECTORY_SEPARATOR . $name . '.phtml';
-        if (file_exists($viewFile)) {
-            ob_start();
-            include $viewFile;
-            return ob_get_clean();
+        $viewsDirs = $this->getViewDirs();
+        $mod = $this->module();
+        foreach ($viewsDirs as $viewsDir) {
+            if (!empty($mod)) {
+                $viewFile = $viewsDir . DIRECTORY_SEPARATOR . $mod . DIRECTORY_SEPARATOR . $name . '.phtml';
+
+                if (file_exists($viewFile)) {
+                    ob_start();
+                    include $viewFile;
+                    return ob_get_clean();
+                }
+            }
+
+
+            $viewFile = $viewsDir . DIRECTORY_SEPARATOR . 
+                DIRECTORY_SEPARATOR. $name . '.phtml';
+
+            if (file_exists($viewFile)) {
+                ob_start();
+                include $viewFile;
+                return ob_get_clean();
+            }
         }
         return false;
     }

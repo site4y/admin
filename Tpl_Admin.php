@@ -11,9 +11,10 @@ class Tpl_Admin extends Tpl
         if (S4Y::access('admin')) {
             try {
                 Admin::loadConfig();
-                $this->_mod = $_REQUEST['mod'] ? $_REQUEST['mod'] : null;
+                $this->_mod = isset($_REQUEST['mod']) ? $_REQUEST['mod'] : null;
                 $modClass = '';
                 if ($this->_mod === null) {
+                    $this->_mod = 'admin';
                     $modClass = 's4y\admin\Admin';
                 } else if (isset(Admin::$admin[$this->_mod])) {
                     $modClass = Admin::$admin[$this->_mod];
@@ -22,7 +23,7 @@ class Tpl_Admin extends Tpl
                 }
 
                 $module = null;
-                if (class_exists($modClass, false)) {
+                if (class_exists($modClass, true)) {
                     $module = new $modClass($this);
                 } else throw new Exception('Класс ' . $modClass . ' не найден');
 
@@ -31,11 +32,13 @@ class Tpl_Admin extends Tpl
                     $actionMethod = $this->_action . 'Action';
                     if (method_exists($module, $actionMethod)) {
                         $module->$actionMethod();
+                        return;
                     } elseif ($this->_action != 'default') {
                         $this->_action = 'default';
                         $actionMethod = 'defaultAction';
                         if (method_exists($module, $actionMethod)) {
                             $module->$actionMethod();
+                            return;
                         }
                     }
                 }

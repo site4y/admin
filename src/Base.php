@@ -102,19 +102,44 @@ abstract class Base {
         return $this->_viewsDirs;
     }
 
-    function view($name)
+    protected $_viewDir = null;
+    protected $_viewName = null;
+
+    function view($name = null)
     {
         if (!empty($this->_vars)) extract($this->_vars);
         $viewsDirs = $this->getViewDirs();
         $mod = $this->module();
+
+        $seekToDir = false;
+        if (!isset($name)) {
+            $seekToDir = $this->_viewDir;
+            $name = $this->_viewName;
+        }
+
         foreach ($viewsDirs as $viewsDir) {
+            if ($seekToDir) {
+                if ($viewsDir != $seekToDir) {
+                    continue;
+                } else {
+                    $seekToDir = false;
+                    continue;
+                }
+            }
+
             if (!empty($mod)) {
                 $viewFile = $viewsDir . DIRECTORY_SEPARATOR . $mod . DIRECTORY_SEPARATOR . $name . '.phtml';
 
                 if (file_exists($viewFile)) {
+                    $prevViewDir = $this->_viewDir;
+                    $prevViewName = $this->_viewName;
+                    $this->_viewDir = $viewsDir;
+                    $this->_viewName = $name;
                     ob_start();
                     include $viewFile;
                     return ob_get_clean();
+                    $this->_viewDir = $prevViewDir;
+                    $this->_viewName = $prevViewName;
                 }
             }
 
@@ -123,9 +148,15 @@ abstract class Base {
                 DIRECTORY_SEPARATOR. $name . '.phtml';
 
             if (file_exists($viewFile)) {
+                $prevViewDir = $this->_viewDir;
+                $prevViewName = $this->_viewName;
+                $this->_viewDir = $viewsDir;
+                $this->_viewName = $name;
                 ob_start();
                 include $viewFile;
                 return ob_get_clean();
+                $this->_viewDir = $prevViewDir;
+                $this->_viewName = $prevViewName;
             }
         }
         return false;

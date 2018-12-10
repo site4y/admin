@@ -62,11 +62,21 @@ Assets::addStyle('
         <?php
             foreach ($items as $id => $item):
                 if (!isset($item['title'])) continue;
-                $url = (isset($item['url']) ? $item['url'] : $id);
+                $url = (isset($item['url']) ? $item['url'] : null);
                 $icon = (isset($item['icon']) ? $item['icon'] : $id);
                 $title =  $item['title'];
                 $class = null;
                 $margin = "";
+                if (!isset($url)) {
+                    if (isset($item['$class'])) {
+                        $url = $id;
+                    } elseif (isset($item['$taskClass'])) {
+                        $url = 'default&action=task&task='.$id;
+                    } elseif (isset($item['$stdAction'])) {
+                        $url = 'default&action='.$item['$stdAction'];
+                    }
+                }
+
                 if (strlen($title) < 50) $margin = ' style="margin-top: 5px"';
                 if (isset($item['color'])) {
                     $color = $item['color'];

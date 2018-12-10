@@ -27,6 +27,10 @@ class Admin extends Base
         }
         if (self::$menu === null) self::$menu = [];
         self::_parseConfig(self::$menu);
+        if (!isset(self::$admin['default'])) {
+            self::$admin['default'] = 's4y\\admin\\Admin';
+
+        }
     }
 
     private static function _parseConfig(&$menu) {

@@ -15,7 +15,7 @@ class Tpl_Admin extends Tpl
                 $modClass = '';
                 if ($this->_mod === null) {
                     $this->_mod = 'admin';
-                    $modClass = 's4y\admin\Admin';
+                    $modClass = 's4y\\admin\\Admin';
                 } else if (isset(Admin::$admin[$this->_mod])) {
                     $modClass = Admin::$admin[$this->_mod];
                 } else {

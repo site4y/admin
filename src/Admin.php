@@ -82,11 +82,11 @@ class Admin extends Base
 
     function taskAction()
     {
-        if (isset($_GET['back']) && $_GET['back'] == 'home') {
+        //if (isset($_GET['back']) && $_GET['back'] == 'home') {
             $this->setReturnUrl(parent::ADMIN_HOME, 'На главную');
-        } else {
+        /*} else {
             $this->setReturnUrl($this->returnUrl, 'К списку задач');
-        }
+        }*/
 
         $taskId = $this->task;
         if (!isset($taskId)) $this->redirectBack(['error' => self::ERROR_NOTASKID]);

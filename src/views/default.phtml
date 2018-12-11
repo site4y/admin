@@ -69,11 +69,11 @@ Assets::addStyle('
                 $margin = "";
                 if (!isset($url)) {
                     if (isset($item['$class'])) {
-                        $url = $id;
+                        $url = '/admin?mod='.$id;
                     } elseif (isset($item['$taskClass'])) {
-                        $url = 'default&action=task&task='.$id;
+                        $url = '/admin?action=task&task='.$id;
                     } elseif (isset($item['$stdAction'])) {
-                        $url = 'default&action='.$item['$stdAction'];
+                        $url = '/admin?action='.$item['$stdAction'];
                     }
                 }
 
@@ -90,7 +90,7 @@ Assets::addStyle('
                 }
         ?>
             <li>
-                <a href="/admin?mod=<?= $url ?>"<?= $class ? ' class="'.$class.'"' : ''?>>
+                <a href="<?= $url ?>"<?= $class ? ' class="'.$class.'"' : ''?>>
                     <i class="glyphicon glyphicon-<?= $icon ?>"<?= $margin ?>></i>
                     <?= $title ?>
                 </a>

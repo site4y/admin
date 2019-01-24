@@ -45,13 +45,17 @@ abstract class CRUD extends Base {
             self::SUCCESS_DELETE => 'Удален успешно',
             self::ERROR_NOID => 'Не передан обязательный параметр id',
             self::ERROR_NOITEM => 'Элемент с указанным id не найден',
-            self::ERROR_DELETE => 'Ошибка при удалении'
+            self::ERROR_DELETE => 'Ошибка при удалении',
         ];
     }
 
     function defaultAction()
     {
         $grid = $this->getGrid();
+        $this->gridPage($grid);
+    }
+
+    function gridPage($grid) {
         if ($this->isAjax()) {
             $grid->ajax();
         } else {
@@ -61,7 +65,10 @@ abstract class CRUD extends Base {
                 $this->setReturnUrl($this->returnUrl, 'Назад');
             }
 
-            $this->setTitle($this->_actions['default']);
+            $action = $this->action();
+            if (isset($this->_actions[$action])) {
+                $this->setTitle($this->_actions[$action]);
+            }
 
             $this->setControls($grid->getAddBtn().' '.$grid->getExportBtn());
             $this->setContent($grid->render());

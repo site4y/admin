@@ -75,10 +75,12 @@ abstract class CRUD extends Base {
         }
     }
 
-    function getGrid() {
-        $options = $this->getGridOptions();
+    function getGrid($options = null) {
+        if (!isset($options)) {
+            $options = $this->getGridOptions();
+        }
         if (!isset($options['url'])) $options['url'] = $this->url();
-        if (!isset($options['ajax'])) $options['ajax'] = '/scripts'. $this->url();
+        if (!isset($options['ajax'])) $options['ajax'] = '/scripts'. $options['url'];
         if (!isset($options['add'])) $options['add'] = $this->url(null, 'add').'&returnUrl={returnUrl}';
         if (!isset($options['edit'])) $options['edit'] = $this->url(null, 'edit'). '&id={id}&returnUrl={returnUrl}';
         if (!isset($options['delete'])) $options['delete'] = $this->url(null, 'delete').'&id={id}&returnUrl={returnUrl}';

@@ -104,7 +104,7 @@ abstract class CRUD extends Base {
         $page = $this->page;
         $full = !isset($page);
         $grid = $this->getGrid();
-        $grid->export('excel', $this->_actions['default'], $this->module(), $full);
+        $grid->export('csv', $this->_actions['default'], $this->module(), $full);
     }
 
     function addAction()

@@ -99,6 +99,14 @@ class Admin extends Base
         if ($this->isPost()) {
             $task = $taskClass::exec();
 
+            if ($this->isAjax()) {
+                if ($task->success) {
+                    $this->ajaxSuccess(1, $task->log);
+                } else {
+                    $this->ajaxError(-1, $task->error.'<br><br>'.$task->log);
+                }                
+            }
+
             if ($task->error) {
                 $this->setError($task->error);
             }
